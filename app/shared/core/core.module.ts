@@ -3,7 +3,7 @@ import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 // angular
 import { NgModule } from '@angular/core';
 // app
-import { PROVIDERS } from './services/index';
+import { PROVIDERS } from './services';
 @NgModule({
     imports: [
         NativeScriptModule
