@@ -8,7 +8,10 @@ export class PlayerService {
     public playing: boolean;
     public tracks: Array<ITrack>;
     constructor() {
-        this.tracks = [];
+        this.tracks = [
+            { name: "Guitar", solo: true },
+            { name: "Vocals", solo: false },
+        ];
     }
 
     public play(index: number): void {
@@ -36,7 +39,7 @@ export class PlayerService {
             this.tracks.splice(newIndex, 0, this.tracks.splice(index, 1)[0]);
         }
     }
-    
+
     private getTrackIndex(track: ITrack): number {
         let index = -1;
         for (let i = 0; i < this.tracks.length; i++) {

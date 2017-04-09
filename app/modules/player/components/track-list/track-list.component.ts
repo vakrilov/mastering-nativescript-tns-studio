@@ -30,7 +30,7 @@ export class TrackListComponent {
                 'Provide an email and password to record.',
                 usernameAttempt
             ).then(
-                this._navToRecord.bind(this, track),
+                this._navToRecord.bind(this, track), // or: () => { this._navToRecord(track); },
                 (usernameAttempt) => {
                     // initiate sequence again
                     this.record(track, usernameAttempt);
