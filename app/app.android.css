@@ -1,0 +1,5 @@
+@import './common.css';
+
+.row .title {
+    vertical-align: center;
+}
