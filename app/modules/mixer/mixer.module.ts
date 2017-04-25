@@ -25,7 +25,6 @@ const routes: Routes = [
 @NgModule({
     imports: [
         PlayerModule,
-        NativeScriptModule,
         NativeScriptRouterModule.forChild(routes)
     ],
     declarations: [

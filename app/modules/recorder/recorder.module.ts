@@ -1,11 +1,10 @@
-// nativescript
-import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 // angular
 import { NgModule } from '@angular/core';
 // app
-import { PROVIDERS } from './services/index';
+import { SharedModule } from '../shared/shared.module';
+import { PROVIDERS } from './services';
 @NgModule({
-    imports: [NativeScriptModule],
-    providers: [...PROVIDERS]
+    imports: [ SharedModule ],
+    providers: [ ...PROVIDERS ]
 })
 export class RecorderModule { }
