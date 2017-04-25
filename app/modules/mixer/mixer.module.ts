@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { NativeScriptRouterModule } from
-    'nativescript-angular/router';
+import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
+import { NativeScriptRouterModule } from 'nativescript-angular/router';
 import { Routes } from '@angular/router';
 import { PlayerModule } from '../player/player.module';
 import { BaseComponent } from './components/base.component';
@@ -25,6 +25,7 @@ const routes: Routes = [
 @NgModule({
     imports: [
         PlayerModule,
+        NativeScriptModule,
         NativeScriptRouterModule.forChild(routes)
     ],
     declarations: [
