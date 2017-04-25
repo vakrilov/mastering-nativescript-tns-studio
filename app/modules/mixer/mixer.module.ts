@@ -7,12 +7,14 @@ import { SharedModule } from '../shared/shared.module';
 import { BaseComponent } from './components/base.component';
 import { MixerComponent } from './components/mixer.component';
 import { MixListComponent } from './components/mix-list.component';
+import { ActionBarComponent } from './components/action-bar/action-bar.component';
 import { PROVIDERS } from './services';
 
 const COMPONENTS: any[] = [
     BaseComponent,
     MixerComponent,
-    MixListComponent
+    MixListComponent,
+    ActionBarComponent
 ]
 const routes: Routes = [
     {
