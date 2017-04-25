@@ -1,7 +1,7 @@
 // angular
 import { Component, Input } from '@angular/core';
 // app
-import { ITrack } from '../../../core/models';
+import { ITrack } from '../../../shared/models';
 import { AuthService, LogService, DialogService } from '../../../core/services';
 import { PlayerService } from '../../services/player.service';
 
@@ -11,6 +11,8 @@ import { PlayerService } from '../../services/player.service';
     templateUrl: 'track-list.component.html'
 })
 export class TrackListComponent {
+    @Input() tracks: Array<ITrack>;
+    
     constructor(
         private authService: AuthService,
         private logService: LogService,

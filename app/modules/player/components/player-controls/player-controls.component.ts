@@ -1,7 +1,7 @@
 // angular
 import { Component, Input } from '@angular/core';
 // app
-import { ITrack } from '../../../core/models';
+import { ITrack } from '../../../shared/models';
 import { LogService } from '../../../core/services';
 import { PlayerService } from '../../services';
 @Component({

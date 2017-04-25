@@ -1,9 +1,12 @@
-<ActionBar title="TNSStudio" class="action-bar">
-    <ActionItem nsRouterLink="/record" ios.position="right">
-        <Button text="Record" class="action-item"></Button>
-    </ActionItem>
+<ActionBar [title]="composition.name" class="action-bar">
+<ActionItem nsRouterLink="/mixer/home">
+<Button text="List" class="action-item"></Button>
+</ActionItem>
+<ActionItem nsRouterLink="/record" ios.position="right">
+<Button text="Record" class="action-item"></Button>
+</ActionItem>
 </ActionBar>
 <GridLayout rows="*, 100" columns="*" class="page">
-    <track-list row="0" col="0"></track-list>
-    <player-controls row="1" col="0"></player-controls>
+<track-list [tracks]="composition.tracks" row="0" col="0"></track-list>
+<player-controls row="1" col="0"></player-controls>
 </GridLayout>

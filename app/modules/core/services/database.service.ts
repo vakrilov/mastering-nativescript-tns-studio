@@ -5,12 +5,14 @@ import * as appSettings from 'application-settings';
 
 interface IKeys {
     currentUser: string;
+    compositions: string;
 }
 
 @Injectable()
 export class DatabaseService {
     public static readonly KEYS: IKeys = {
-        currentUser: 'current-user'
+        currentUser: 'current-user',
+        compositions: 'compositions'
     };
     public setItem(key: string, value: any): void {
         appSettings.setString(key, JSON.stringify(value));

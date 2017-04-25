@@ -1,7 +1,7 @@
 // angular
 import { Injectable } from '@angular/core';
 // app
-import { ITrack } from '../../core/models/index';
+import { ITrack } from '../../shared/models/index';
 
 @Injectable()
 export class PlayerService {

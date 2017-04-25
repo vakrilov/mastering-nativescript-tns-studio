@@ -1,4 +1,4 @@
-<ListView [items]="playerService.tracks | orderBy: 'order'" class="list-group">
+<ListView [items]="tracks | orderBy: 'order'" class="list-group">
     <ng-template let-track="item">
         <GridLayout rows="auto" columns="100,*,100" class="list-group-item">
             <Button text="Record" (tap)="record(track)" row="0" col="0" class="c-ruby"></Button>

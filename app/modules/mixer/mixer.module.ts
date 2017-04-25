@@ -6,10 +6,13 @@ import { PlayerModule } from '../player/player.module';
 import { SharedModule } from '../shared/shared.module';
 import { BaseComponent } from './components/base.component';
 import { MixerComponent } from './components/mixer.component';
+import { MixListComponent } from './components/mix-list.component';
+import { PROVIDERS } from './services';
 
 const COMPONENTS: any[] = [
     BaseComponent,
-    MixerComponent
+    MixerComponent,
+    MixListComponent
 ]
 const routes: Routes = [
     {
@@ -18,11 +21,16 @@ const routes: Routes = [
         children: [
             {
                 path: 'home',
+                component: MixListComponent
+            },
+            {
+                path: ':id',
                 component: MixerComponent
             }
         ]
     }
 ];
+
 @NgModule({
     imports: [
         PlayerModule,
@@ -31,6 +39,9 @@ const routes: Routes = [
     ],
     declarations: [
         ...COMPONENTS
+    ],
+    providers: [
+        ...PROVIDERS
     ]
 })
 export class MixerModule { }

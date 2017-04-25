@@ -1,4 +1,5 @@
 export interface ITrack {
+    id?: number;
     filepath?: string;
     name?: string;
     order?: number;
@@ -7,6 +8,7 @@ export interface ITrack {
 }
 
 export class TrackModel implements ITrack {
+    public id: number;
     public filepath: string;
     public name: string;
     public order: number;
@@ -14,11 +16,12 @@ export class TrackModel implements ITrack {
     public solo: boolean;
     constructor(model?: any) {
         if (model) {
-            for (let key in model) {
-                this[key] = model[key];
-            }
+            // for (let key in model) {
+            //     this[key] = model[key];
+            // }
 
             Object.assign(this, model);
         }
+        if (!this.id) this.id = Math.floor(Math.random() * 100000);
     }
 }
