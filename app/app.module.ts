@@ -3,11 +3,12 @@ import { NgModule } from '@angular/core';
 // app
 import { AppComponent } from './app.component';
 import { CoreModule } from './modules/core/core.module';
-import { PlayerModule } from './modules/player/player.module';
+import { AppRoutingModule } from './app.routing';
+
 @NgModule({
     imports: [
         CoreModule,
-        PlayerModule
+        AppRoutingModule
     ],
     declarations: [AppComponent],
     bootstrap: [AppComponent]
