@@ -2,6 +2,7 @@ import { NgModule, NgModuleFactoryLoader } from '@angular/core';
 import { CustomModuleFactoryLoader } from './app.module-loader';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
 import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth-guard.service';
 
 const routes: Routes = [
     {
@@ -15,7 +16,8 @@ const routes: Routes = [
     },
     {
         path: 'record',
-        loadChildren: './modules/recorder/recorder.module#RecorderModule'
+        loadChildren: './modules/recorder/recorder.module#RecorderModule',
+        canLoad: [AuthGuard]
     }
 ];
 
@@ -24,6 +26,7 @@ const routes: Routes = [
         NativeScriptRouterModule.forRoot(routes)
     ],
     providers: [
+        AuthGuard,
         {
             provide: NgModuleFactoryLoader,
             useClass: CustomModuleFactoryLoader
