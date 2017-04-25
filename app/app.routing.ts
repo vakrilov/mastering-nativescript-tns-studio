@@ -1,6 +1,6 @@
 import { NgModule, NgModuleFactoryLoader } from '@angular/core';
 import { CustomModuleFactoryLoader } from './app.module-loader';
-import { NativeScriptRouterModule } from 'nativescript-angular/router';
+import { NativeScriptRouterModule, NSModuleFactoryLoader } from 'nativescript-angular/router';
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth-guard.service';
 
@@ -29,7 +29,8 @@ const routes: Routes = [
         AuthGuard,
         {
             provide: NgModuleFactoryLoader,
-            useClass: CustomModuleFactoryLoader
+            // useClass: CustomModuleFactoryLoader,
+            useClass: NSModuleFactoryLoader
         }],
     exports: [
         NativeScriptRouterModule
