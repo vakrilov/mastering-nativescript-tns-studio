@@ -1,16 +1,22 @@
 // angular
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 // libs
+
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
+
+// nativescript
+import { isIOS } from 'platform';
+
 // app
-import { ITrack, CompositionModel, TrackPlayerModel } from '../../shared/models';
+import { ITrack, CompositionModel, TrackPlayerModel, IPlayerError } from '../../shared/models';
 @Injectable()
 export class PlayerService {
     // observable state
     public playing$: Subject<boolean> = new Subject();
     public duration$: Subject<number> = new Subject();
     public currentTime$: Observable<number>;
+    public complete$: Subject<number> = new Subject();
 
     // active composition
     private _composition: CompositionModel;
@@ -21,11 +27,11 @@ export class PlayerService {
     // used to report currentTime from
     private _longestTrack: TrackPlayerModel;
 
-    constructor() {
+    constructor(private ngZone: NgZone) {
         // observe currentTime changes every 1 seconds
         this.currentTime$ = Observable.interval(1000)
             .map(_ => this._longestTrack ?
-                this._longestTrack.player.currentTime
+                this._standardizeTime(this._longestTrack.player.currentTime)
                 : 0);
     }
     public set playing(value: boolean) {
@@ -46,16 +52,18 @@ export class PlayerService {
         let initTrackPlayer = (index: number) => {
             let track = this._composition.tracks[ index ];
             let trackPlayer = new TrackPlayerModel();
-            trackPlayer.load(track).then(_ => {
-                this._trackPlayers.push(trackPlayer);
-                index++;
-                if (index < this._composition.tracks.length) {
-                    initTrackPlayer(index);
-                } else {
-                    // report total duration of composition
-                    this._updateTotalDuration();
-                }
-            });
+            trackPlayer.load(track,
+                this._trackComplete.bind(this),
+                this._trackError.bind(this)).then(_ => {
+                    this._trackPlayers.push(trackPlayer);
+                    index++;
+                    if (index < this._composition.tracks.length) {
+                        initTrackPlayer(index);
+                    } else {
+                        // report total duration of composition
+                        this._updateTotalDuration();
+                    }
+                });
         };
         // kick off multi-track player initialization
         initTrackPlayer(0);
@@ -89,6 +97,9 @@ export class PlayerService {
                 break;
             }
         }
+        // standardize to seconds
+        totalDuration = this._standardizeTime(totalDuration);
+        console.log('totalDuration of mix:', totalDuration);
         this.duration$.next(totalDuration);
     }
     private _resetTrackPlayers() {
@@ -96,5 +107,21 @@ export class PlayerService {
             t.cleanup();
         }
         this._trackPlayers = [];
+    }
+
+    private _trackComplete(trackId: number) {
+        this.ngZone.run(() => {
+            console.log('track complete:', trackId);
+            this.playing = false;
+            this.complete$.next(trackId);
+        });
+    }
+
+    private _trackError(playerError: IPlayerError) {
+        console.log(`trackId ${playerError.trackId} error:`,
+            playerError.error);
+    }
+    private _standardizeTime(time: number) {
+        return isIOS ? time : time * .001;
     }
 }

@@ -3,24 +3,44 @@ import { TNSPlayer } from 'nativescript-audio';
 
 // app
 import { ITrack } from './track.model';
+
+export interface IPlayerError {
+    trackId: number;
+    error: any;
+}
+
 interface ITrackPlayer {
     trackId: number;
     duration: number;
     readonly player: TNSPlayer;
 }
+
 export class TrackPlayerModel implements ITrackPlayer {
     public trackId: number;
     public duration: number;
+
     private _player: TNSPlayer;
+    private _completeHandler: (number) => void;
+    private _errorHandler: (IPlayerError) => void;
+
     constructor() {
         this._player = new TNSPlayer();
     }
-    public load(track: ITrack): Promise<number> {
+    public load(
+        track: ITrack,
+        complete: (number) => void,
+        error: (IPlayerError) => void): Promise<number> {
         return new Promise((resolve, reject) => {
+
             this.trackId = track.id;
+            this._completeHandler = complete;
+            this._errorHandler = error;
+
             this._player.initFromFile({
                 audioFile: track.filepath,
-                loop: false
+                loop: false,
+                completeCallback: this._trackComplete.bind(this),
+                errorCallback: this._trackError.bind(this)
             }).then(() => {
                 this._player.getAudioTrackDuration()
                     .then((duration) => {
@@ -38,5 +58,21 @@ export class TrackPlayerModel implements ITrackPlayer {
         if (this.player) {
             this.player.dispose();
         }
+    }
+
+    private _trackComplete(args: any) {
+        // TODO: works well for multi-tracks with same length
+        // may need to change in future with varied lengths
+        this.player.seekTo(0);
+        console.log('trackComplete:', this.trackId);
+        if (this._completeHandler)
+            this._completeHandler(this.trackId);
+    }
+
+    private _trackError(args: any) {
+        let error = args.error;
+        console.log('trackError:', error);
+        if (this._errorHandler)
+            this._errorHandler({ trackId: this.trackId, error });
     }
 }

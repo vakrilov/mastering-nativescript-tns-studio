@@ -23,7 +23,8 @@ export class PlayerControlsComponent {
     private _subPlaying: Subscription;
     private _subDuration: Subscription;
     private _subCurrentTime: Subscription;
-    
+    private _subComplete: Subscription;
+
     constructor(
         private playerService: PlayerService
     ) { }
@@ -49,20 +50,31 @@ export class PlayerControlsComponent {
                     this._subCurrentTime.unsubscribe();
                 }
             });
+
         // update duration state for slider
         this._subDuration = this.playerService.duration$
             .subscribe((duration: number) => {
                 this.duration = duration;
             });
+
+        // completion should reset currentTime
+        this._subComplete = this.playerService.complete$.subscribe(_ => {
+            this.currentTime = 0;
+        });
     }
     ngOnDestroy() {
         // cleanup
         if (this._subPlaying)
             this._subPlaying.unsubscribe();
+            
         if (this._subDuration)
             this._subDuration.unsubscribe();
+
         if (this._subCurrentTime)
             this._subCurrentTime.unsubscribe();
+
+        if (this._subComplete)
+            this._subComplete.unsubscribe();
     }
     private _updateStatus(playing: boolean) {
         this.playStatus = playing ? 'Stop' : 'Play';
