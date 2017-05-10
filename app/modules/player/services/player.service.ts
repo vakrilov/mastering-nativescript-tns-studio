@@ -26,14 +26,26 @@ export class PlayerService {
     private _trackPlayers: Array<TrackPlayerModel> = [];
     // used to report currentTime from
     private _longestTrack: TrackPlayerModel;
+    private _seeking: boolean;
+    private _seekPaused: boolean;
+    private _seekTimeout: number;
 
     constructor(private ngZone: NgZone) {
         // observe currentTime changes every 1 seconds
         this.currentTime$ = Observable.interval(1000)
-            .map(_ => this._longestTrack ?
-                this._standardizeTime(this._longestTrack.player.currentTime)
-                : 0);
+            .switchMap(_ => {
+                if (this._seeking) {
+                    return Observable.never();
+                } else if (this._longestTrack) {
+                    return Observable.of(
+                        this._standardizeTime(
+                            this._longestTrack.player.currentTime));
+                } else {
+                    return Observable.of(0);
+                }
+            });
     }
+    
     public set playing(value: boolean) {
         this._playing = value;
         this.playing$.next(value);
@@ -68,6 +80,31 @@ export class PlayerService {
         // kick off multi-track player initialization
         initTrackPlayer(0);
     }
+
+    public set seeking(value: boolean) {
+        this._seeking = value;
+        if (this._playing && !this._seekPaused) {
+            // pause while seeking
+            this._seekPaused = true;
+            this.pause();
+        }
+        if (this._seekTimeout) clearTimeout(this._seekTimeout);
+        this._seekTimeout = setTimeout(() => {
+            this._seeking = false;
+            if (this._seekPaused) {
+                // resume play
+                this._seekPaused = false;
+                this.play();
+            }
+        }, 1000);
+    }
+
+    public seekTo(time: number) {
+        for (let track of this._trackPlayers) {
+            track.player.seekTo(time);
+        }
+    }
+
     public togglePlay() {
         this.playing = !this.playing;
         if (this.playing) {
