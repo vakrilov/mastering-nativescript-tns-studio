@@ -2,7 +2,7 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 // nativescript
 import { GestureTypes } from 'ui/gestures';
-import { StackLayout } from 'ui/layouts/stack-layout';
+import { View } from 'ui/core/view';
 import { Label } from 'ui/label';
 import { Slider } from 'ui/slider';
 import { Observable } from 'data/observable';
@@ -31,7 +31,7 @@ export class ShuttleSliderComponent {
     @ViewChild('slider') slider: ElementRef;
     @ViewChild('currentTimeDisplay') currentTimeDisplay: ElementRef;
     public durationDisplay: string;
-    private _sliderArea: StackLayout;
+    private _sliderArea: View;
     private _currentTimeDisplay: Label;
     private _slider: Slider;
     private _screenWidth: number;
@@ -48,7 +48,7 @@ export class ShuttleSliderComponent {
     }
     ngAfterViewInit() {
         this._screenWidth = screen.mainScreen.widthDIPs;
-        this._sliderArea = <StackLayout>this.sliderArea.nativeElement;
+        this._sliderArea = this.sliderArea.nativeElement;
         this._slider = <Slider>this.slider.nativeElement;
         this._currentTimeDisplay = <Label>this.currentTimeDisplay
             .nativeElement;
