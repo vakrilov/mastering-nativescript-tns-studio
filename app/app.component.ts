@@ -6,6 +6,8 @@ import { topmost } from 'ui/frame';
 import * as app from 'application';
 import { Page } from "ui/page";
 
+import './operators';
+
 // app
 import { AuthService } from './modules/core/services';
 

@@ -1,53 +1,100 @@
 // angular
 import { Injectable } from '@angular/core';
+// libs
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 // app
-import { ITrack } from '../../shared/models/index';
-
+import { ITrack, CompositionModel, TrackPlayerModel } from '../../shared/models';
 @Injectable()
 export class PlayerService {
-    public playing: boolean;
-    public tracks: Array<ITrack>;
+    // observable state
+    public playing$: Subject<boolean> = new Subject();
+    public duration$: Subject<number> = new Subject();
+    public currentTime$: Observable<number>;
+
+    // active composition
+    private _composition: CompositionModel;
+    // internal state
+    private _playing: boolean;
+    // collection of track players
+    private _trackPlayers: Array<TrackPlayerModel> = [];
+    // used to report currentTime from
+    private _longestTrack: TrackPlayerModel;
+
     constructor() {
-        this.tracks = [
-            { name: "Guitar", solo: true },
-            { name: "Vocals", solo: false },
-        ];
+        // observe currentTime changes every 1 seconds
+        this.currentTime$ = Observable.interval(1000)
+            .map(_ => this._longestTrack ?
+                this._longestTrack.player.currentTime
+                : 0);
     }
-
-    public play(index: number): void {
-        this.playing = true;
+    public set playing(value: boolean) {
+        this._playing = value;
+        this.playing$.next(value);
     }
-
-    public pause(index: number): void {
-        this.playing = false;
+    public get playing(): boolean {
+        return this._playing;
     }
-
-    public addTrack(track: ITrack): void {
-        this.tracks.push(track);
+    public get composition(): CompositionModel {
+        return this._composition;
     }
-
-    public removeTrack(track: ITrack): void {
-        let index = this.getTrackIndex(track);
-        if (index > -1) {
-            this.tracks.splice(index, 1);
+    public set composition(comp: CompositionModel) {
+        this._composition = comp;
+        // clear any previous players
+        this._resetTrackPlayers();
+        // setup player instances for each track
+        let initTrackPlayer = (index: number) => {
+            let track = this._composition.tracks[ index ];
+            let trackPlayer = new TrackPlayerModel();
+            trackPlayer.load(track).then(_ => {
+                this._trackPlayers.push(trackPlayer);
+                index++;
+                if (index < this._composition.tracks.length) {
+                    initTrackPlayer(index);
+                } else {
+                    // report total duration of composition
+                    this._updateTotalDuration();
+                }
+            });
+        };
+        // kick off multi-track player initialization
+        initTrackPlayer(0);
+    }
+    public togglePlay() {
+        this.playing = !this.playing;
+        if (this.playing) {
+            this.play();
+        } else {
+            this.pause();
         }
     }
-
-    public reorderTrack(track: ITrack, newIndex: number) {
-        let index = this.getTrackIndex(track);
-        if (index > -1) {
-            this.tracks.splice(newIndex, 0, this.tracks.splice(index, 1)[0]);
+    public play() {
+        for (let t of this._trackPlayers) {
+            t.player.play();
         }
     }
-
-    private getTrackIndex(track: ITrack): number {
-        let index = -1;
-        for (let i = 0; i < this.tracks.length; i++) {
-            if (this.tracks[i].filepath === track.filepath) {
-                index = i;
+    public pause() {
+        for (let t of this._trackPlayers) {
+            t.player.pause();
+        }
+    }
+    // ...
+    private _updateTotalDuration() {
+        // report longest track as the total duration of the mix
+        let totalDuration = Math.max(...this._trackPlayers.map(t => t.duration));
+        // update trackPlayer to reflect longest track
+        for (let t of this._trackPlayers) {
+            if (t.duration === totalDuration) {
+                this._longestTrack = t;
                 break;
             }
         }
-        return index;
+        this.duration$.next(totalDuration);
+    }
+    private _resetTrackPlayers() {
+        for (let t of this._trackPlayers) {
+            t.cleanup();
+        }
+        this._trackPlayers = [];
     }
 }
