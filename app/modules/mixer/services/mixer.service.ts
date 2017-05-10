@@ -60,8 +60,9 @@ export class MixerService {
         this.databaseService
             .setItem(DatabaseService.KEYS.compositions, this.list);
     }
+    
     private _demoComposition(): Array<IComposition> {
-        // Starter composition to demo on first launch
+        // starter composition for user to demo on first launch
         return [
             {
                 id: 1,
@@ -71,16 +72,24 @@ export class MixerService {
                 tracks: [
                     {
                         id: 1,
-                        name: 'Guitar',
-                        order: 0
+                        name: 'Drums',
+                        order: 0,
+                        filepath: '~/audio/drums.mp3'
                     },
                     {
                         id: 2,
-                        name: 'Vocals',
-                        order: 1
+                        name: 'Bass',
+                        order: 1,
+                        filepath: '~/audio/bass.mp3'
+                    },
+                    {
+                        id: 3,
+                        name: 'Piano',
+                        order: 2,
+                        filepath: '~/audio/piano.mp3'
                     }
                 ]
             }
-        ]
+        ];
     }
 }
