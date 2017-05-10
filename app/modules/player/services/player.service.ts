@@ -77,13 +77,27 @@ export class PlayerService {
         }
     }
     public play() {
-        for (let t of this._trackPlayers) {
-            t.player.play();
+        // for iOS playback sync
+        let shortStartDelay = .01;
+        let now = 0;
+        for (let i = 0; i < this._trackPlayers.length; i++) {
+            let track = this._trackPlayers[ i ];
+            if (isIOS) {
+                if (i == 0) now = track.player.ios.deviceCurrentTime;
+                (<any>track.player).playAtTime(now + shortStartDelay);
+            } else {
+                track.player.play();
+            }
         }
     }
     public pause() {
-        for (let t of this._trackPlayers) {
-            t.player.pause();
+        let currentTime = 0;
+        for (let i = 0; i < this._trackPlayers.length; i++) {
+            let track = this._trackPlayers[ i ];
+            if (i == 0) currentTime = track.player.currentTime;
+            track.player.pause();
+            // ensure tracks pause and remain paused at the same time
+            track.player.seekTo(currentTime);
         }
     }
     // ...
