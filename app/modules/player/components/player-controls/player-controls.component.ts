@@ -2,6 +2,8 @@
 import { Component, Input } from '@angular/core';
 // libs
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+
 // app
 import { ITrack, CompositionModel } from '../../../shared/models';
 import { PlayerService } from '../../services';
@@ -14,16 +16,9 @@ import { PlayerService } from '../../services';
 export class PlayerControlsComponent {
     @Input() composition: CompositionModel;
 
-    // ui state
-    public playStatus: string = 'Play';
-    public duration: number = 0;
-    public currentTime: number = 0;
-
-    // manage subscriptions
-    private _subPlaying: Subscription;
-    private _subDuration: Subscription;
-    private _subCurrentTime: Subscription;
-    private _subComplete: Subscription;
+    public playStatus$: Observable<string>;
+    public currentTime$: Observable<number>;
+    public duration$: Observable<number>;
 
     constructor(
         private playerService: PlayerService
@@ -34,49 +29,13 @@ export class PlayerControlsComponent {
     ngOnInit() {
         // init audio player for composition
         this.playerService.composition = this.composition;
-        // react to play state
-        this._subPlaying = this.playerService.playing$
-            .subscribe((playing: boolean) => {
-                // update button state
-                this._updateStatus(playing);
-                // update slider state
-                if (playing) {
-                    this._subCurrentTime = this.playerService
-                        .currentTime$
-                        .subscribe((currentTime: number) => {
-                            this.currentTime = currentTime;
-                        });
-                } else if (this._subCurrentTime) {
-                    this._subCurrentTime.unsubscribe();
-                }
-            });
+       
+        this.playStatus$ = Observable
+            .of(false) // the default value
+            .concat(this.playerService.playing$)
+            .map((value: boolean) => value ? 'Stop' : 'Play');
 
-        // update duration state for slider
-        this._subDuration = this.playerService.duration$
-            .subscribe((duration: number) => {
-                this.duration = duration;
-            });
-
-        // completion should reset currentTime
-        this._subComplete = this.playerService.complete$.subscribe(_ => {
-            this.currentTime = 0;
-        });
-    }
-    ngOnDestroy() {
-        // cleanup
-        if (this._subPlaying)
-            this._subPlaying.unsubscribe();
-            
-        if (this._subDuration)
-            this._subDuration.unsubscribe();
-
-        if (this._subCurrentTime)
-            this._subCurrentTime.unsubscribe();
-
-        if (this._subComplete)
-            this._subComplete.unsubscribe();
-    }
-    private _updateStatus(playing: boolean) {
-        this.playStatus = playing ? 'Stop' : 'Play';
+        this.currentTime$ = this.playerService.currentTime$;
+        this.duration$ = this.playerService.duration$;
     }
 }

@@ -1,4 +1,6 @@
 <StackLayout row="1" col="0" class="controls">
-    <shuttle-slider [currentTime]="currentTime" [duration]="duration"></shuttle-slider>
-    <Button [text]="playStatus" (tap)="togglePlay()" class="btn btn-primary w-100"></Button>
+    <shuttle-slider [currentTime]="currentTime$ | async"
+        [duration]="duration$ | async"></shuttle-slider>
+    <Button [text]="playStatus$ | async" 
+        (tap)="togglePlay()" class="btn btn-primary w-100"></Button>
 </StackLayout>
