@@ -39,8 +39,8 @@ export class TrackPlayerModel implements ITrackPlayer {
             this._player.initFromFile({
                 audioFile: track.filepath,
                 loop: false,
-                completeCallback: this._trackComplete.bind(this),
-                errorCallback: this._trackError.bind(this)
+                completeCallback: zonedCallback(this._trackComplete.bind(this)),
+                errorCallback: zonedCallback(this._trackError.bind(this))
             }).then(() => {
                 this._player.getAudioTrackDuration()
                     .then((duration) => {

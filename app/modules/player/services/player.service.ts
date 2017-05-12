@@ -30,7 +30,7 @@ export class PlayerService {
     private _seekPaused: boolean;
     private _seekTimeout: number;
 
-    constructor(private ngZone: NgZone) {
+    constructor() {
         // observe currentTime changes every 1 seconds
         this.currentTime$ = Observable.interval(1000)
             .switchMap(_ => {
@@ -45,7 +45,7 @@ export class PlayerService {
                 }
             });
     }
-    
+
     public set playing(value: boolean) {
         this._playing = value;
         this.playing$.next(value);
@@ -161,11 +161,10 @@ export class PlayerService {
     }
 
     private _trackComplete(trackId: number) {
-        this.ngZone.run(() => {
-            console.log('track complete:', trackId);
-            this.playing = false;
-            this.complete$.next(trackId);
-        });
+        console.log('track complete:', trackId);
+        console.log("is in angular zone: " + NgZone.isInAngularZone());
+        this.playing = false;
+        this.complete$.next(trackId);
     }
 
     private _trackError(playerError: IPlayerError) {
