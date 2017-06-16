@@ -24,6 +24,7 @@
     "@angular/router": "4.0.0",
     "nativescript-angular": "3.0.0",
     "nativescript-audio": "^3.4.2",
+    "nativescript-audiokit": "file:nativescript-audiokit",
     "nativescript-theme-core": "~1.0.2",
     "reflect-metadata": "~0.1.8",
     "rxjs": "~5.2.0",
@@ -37,6 +38,7 @@
     "lazy": "1.0.11",
     "nativescript-dev-android-snapshot": "^0.*.*",
     "nativescript-dev-typescript": "~0.4.0",
+    "tns-platform-declarations": "^3.0.1",
     "typescript": "^2.3.2"
   }
 }
