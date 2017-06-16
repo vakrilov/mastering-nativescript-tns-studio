@@ -22,13 +22,13 @@
     "@angular/platform-browser": "4.0.0",
     "@angular/platform-browser-dynamic": "4.0.0",
     "@angular/router": "4.0.0",
-    "nativescript-angular": "3.0.0",
+    "nativescript-angular": "next",
     "nativescript-audio": "^3.4.2",
     "nativescript-audiokit": "file:nativescript-audiokit",
     "nativescript-theme-core": "~1.0.2",
     "reflect-metadata": "~0.1.8",
     "rxjs": "~5.2.0",
-    "tns-core-modules": "3.0.0",
+    "tns-core-modules": "next",
     "zone.js": "~0.8.2"
   },
   "devDependencies": {

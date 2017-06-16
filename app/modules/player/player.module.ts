@@ -4,11 +4,11 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { COMPONENTS } from './components';
 import { DIRECTIVES } from './directives';
-import { PROVIDERS } from './services';
+// import { PROVIDERS } from './services';
 
 @NgModule({
     imports: [ SharedModule ],
-    providers: [ ...PROVIDERS ],
+    // providers: [ ...PROVIDERS ],
     declarations: [ ...COMPONENTS, ... DIRECTIVES],
     exports: [
         SharedModule,

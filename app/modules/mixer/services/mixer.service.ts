@@ -52,6 +52,21 @@ export class MixerService {
                 }
             });
     }
+
+    // Added form the repo code
+    public save(updatedComp: CompositionModel) {
+        for (let comp of this.list) {
+        if (comp.id === updatedComp.id) {
+            console.log('found comp.id:', comp.id);
+            comp = updatedComp;
+            break;
+        }
+        }
+        console.log('saving composition list...');
+        // console.log(JSON.stringify(this.list));
+        this._saveList();
+    }
+
     private _savedCompositions(): any {
         return this.databaseService
             .getItem(DatabaseService.KEYS.compositions);

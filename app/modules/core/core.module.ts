@@ -6,6 +6,9 @@ import { NativeScriptHttpModule } from 'nativescript-angular/http';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 // app
 import { PROVIDERS } from './services';
+import { PROVIDERS as MIXER_PROVIDERS } from '../mixer/services';
+import { PROVIDERS as PLAYER_PROVIDERS } from '../player/services';
+
 const MODULES: any[] = [
     NativeScriptModule,
     NativeScriptFormsModule,
@@ -16,7 +19,9 @@ const MODULES: any[] = [
         ...MODULES
     ],
     providers: [
-        ...PROVIDERS
+        ...PROVIDERS,
+        ...MIXER_PROVIDERS,
+        ...PLAYER_PROVIDERS
     ],
     exports: [
         ...MODULES

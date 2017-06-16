@@ -9,7 +9,9 @@ import { Observable } from 'rxjs/Observable';
 import { isIOS } from 'platform';
 
 // app
-import { ITrack, CompositionModel, TrackPlayerModel, IPlayerError } from '../../shared/models';
+import { ITrack, CompositionModel, TrackPlayerModel, IPlayerError, TrackModel } from '../../shared/models';
+import { MixerService } from '../../mixer/services/mixer.service';
+
 @Injectable()
 export class PlayerService {
     // observable state
@@ -22,15 +24,20 @@ export class PlayerService {
     private _composition: CompositionModel;
     // internal state
     private _playing: boolean;
+
     // collection of track players
     private _trackPlayers: Array<TrackPlayerModel> = [];
+
     // used to report currentTime from
     private _longestTrack: TrackPlayerModel;
     private _seeking: boolean;
     private _seekPaused: boolean;
     private _seekTimeout: number;
 
-    constructor() {
+    // default name of new tracks
+    private _defaultTrackName: string = 'New Track';
+
+    constructor(private mixerService: MixerService) {
         // observe currentTime changes every 1 seconds
         this.currentTime$ = Observable.interval(1000)
             .switchMap(_ => {
@@ -105,28 +112,33 @@ export class PlayerService {
         }
     }
 
-    public togglePlay() {
-        this.playing = !this.playing;
-        if (this.playing) {
-            this.play();
-        } else {
-            this.pause();
+    public togglePlay(excludeTrackId?: number) {
+        if (this._trackPlayers.length) {
+            this.playing = !this.playing;
+            if (this.playing) {
+                this.play(excludeTrackId);
+            } else {
+                this.pause();
+            }
         }
     }
-    public play() {
+    public play(excludeTrackId?: number) {
         // for iOS playback sync
         let shortStartDelay = .01;
         let now = 0;
         for (let i = 0; i < this._trackPlayers.length; i++) {
             let track = this._trackPlayers[ i ];
-            if (isIOS) {
-                if (i == 0) now = track.player.ios.deviceCurrentTime;
-                (<any>track.player).playAtTime(now + shortStartDelay);
-            } else {
-                track.player.play();
+            if (excludeTrackId !== track.trackId) {
+                if (isIOS) {
+                    if (i == 0) now = track.player.ios.deviceCurrentTime;
+                    (<any>track.player).playAtTime(now + shortStartDelay);
+                } else {
+                    track.player.play();
+                }
             }
         }
     }
+
     public pause() {
         let currentTime = 0;
         for (let i = 0; i < this._trackPlayers.length; i++) {
@@ -137,7 +149,55 @@ export class PlayerService {
             track.player.seekTo(currentTime);
         }
     }
-    // ...
+
+    public addTrack(track: TrackModel): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let trackPlayer = this._trackPlayers.find((p) => p.trackId ===
+                track.id);
+            if (!trackPlayer) {
+                // new track
+                trackPlayer = new TrackPlayerModel();
+                this._composition.tracks.push(track);
+                this._trackPlayers.push(trackPlayer);
+            } else {
+                // update track
+                this.updateTrack(track);
+            }
+            trackPlayer.load(
+                track,
+                this._trackComplete.bind(this),
+                this._trackError.bind(this)
+            ).then(_ => {
+                // report longest duration as totalDuration
+                this._updateTotalDuration();
+                resolve();
+            });
+        })
+    }
+    public updateCompositionTrack(trackId: number, filepath: string): number {
+        let track;
+        if (!trackId) {
+            // Create a new track
+            let cnt = this._defaultTrackNamesCnt();
+            track = new TrackModel({
+                name: `${this._defaultTrackName}${cnt ? ' ' + (cnt + 1) : ''}`,
+                order: this.composition.tracks.length,
+                filepath
+            });
+            trackId = track.id;
+        } else {
+            // find by id and update
+            track = this.findTrack(trackId);
+            track.filepath = filepath;
+        }
+        this.addTrack(track);
+        return trackId;
+    }
+    private _defaultTrackNamesCnt() {
+        return this.composition.tracks
+            .filter(t => t.name.startsWith(this._defaultTrackName)).length;
+    }
+
     private _updateTotalDuration() {
         // report longest track as the total duration of the mix
         let totalDuration = Math.max(...this._trackPlayers.map(t => t.duration));
@@ -173,5 +233,23 @@ export class PlayerService {
     }
     private _standardizeTime(time: number) {
         return isIOS ? time : time * .001;
+    }
+
+
+    // Additionaly added
+    public findTrack(trackId: number) {
+        return this._composition.tracks.find(t => t.id === trackId);
+    }
+    public updateTrack(track: TrackModel) {
+        for (let t of this._composition.tracks) {
+            if (t.id === track.id) {
+                t = track;
+                break;
+            }
+        }
+    }
+
+    public saveComposition() {
+        this.mixerService.save(this.composition);
     }
 }

@@ -1,4 +1,4 @@
-<mix-action-bar [title]="composition.name"></mix-action-bar>
+<mix-action-bar [title]="composition.name" (showRecordModal)="showRecordModal()"></mix-action-bar>
 <GridLayout rows="*, 100" columns="*" class="page">
     <track-list [tracks]="composition.tracks" row="0" col="0"></track-list>
     <player-controls [composition]="composition"
