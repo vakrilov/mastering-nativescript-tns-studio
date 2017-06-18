@@ -252,4 +252,37 @@ export class PlayerService {
     public saveComposition() {
         this.mixerService.save(this.composition);
     }
+
+    public removeTrack(trackId: number): void {
+        let index = this._getTrackPlayerIndex(trackId);
+        if (index > -1) {
+            this._trackPlayers.splice(index, 1);
+        }
+        index = this._getTrackIndex(trackId);
+        if (index > -1) {
+            this._composition.tracks.splice(index, 1);
+        }
+    }
+
+    private _getTrackIndex(trackId: number): number {
+        let index = -1;
+        for (let i = 0; i < this._composition.tracks.length; i++) {
+            if (this._composition.tracks[ i ].id === trackId) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    private _getTrackPlayerIndex(trackId: number): number {
+        let index = -1;
+        for (let i = 0; i < this._trackPlayers.length; i++) {
+            if (this._trackPlayers[ i ].trackId === trackId) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
 }

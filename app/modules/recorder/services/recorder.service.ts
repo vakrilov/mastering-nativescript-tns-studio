@@ -54,8 +54,7 @@ export class RecorderService {
         this._sub.unsubscribe();
         if (!this.model.savedFilePath) {
             // user did not save recording, cleanup
-            // TODO: Implement this
-            // this.playerService.removeTrack(this._trackId);
+            this.playerService.removeTrack(this._trackId);
         }
     }
 
@@ -101,7 +100,6 @@ export class RecorderService {
         this._sub.unsubscribe();
         this._stopMix();
         this.playerService.updateCompositionTrack(this._trackId, this.model.savedFilePath);
-        // TODO: Implement this
         this.playerService.saveComposition();
         this.model.finish();
     }
