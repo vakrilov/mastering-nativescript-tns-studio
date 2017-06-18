@@ -5,6 +5,7 @@ export interface IWaveformModel {
     readonly target: any;
     dispose(): void;
 }
+
 export interface IWaveform extends View {
   type: WaveformType;
   model: IWaveformModel;

@@ -1,7 +1,8 @@
 import { View } from 'ui/core/view';
 import { Color } from 'color';
 import { Subscription } from 'rxjs/Subscription';
-import { IWaveform, IWaveformModel, WaveformType } from './common';
+import { IWaveform, IWaveformModel, WaveformType, Waveform as WaveformDefinition } from './waveform';
+
 const GLSurfaceView = android.opengl.GLSurfaceView;
 const AudioRecord = android.media.AudioRecord;
 // Horizon recorder waveform
@@ -23,7 +24,7 @@ const WaveformView = com.semantive.waveformandroid.waveform.view.WaveformView;
 const CheapSoundFile = com.semantive.waveformandroid.waveform.soundfile.CheapSoundFile;
 const ProgressListener = com.semantive.waveformandroid.waveform.soundfile.CheapSoundFile.ProgressListener;
 
-export class Waveform extends View implements IWaveform {
+export class Waveform extends View implements IWaveform, WaveformDefinition {
     private _model: IWaveformModel;
     private _type: WaveformType;
     private _initialized: boolean;

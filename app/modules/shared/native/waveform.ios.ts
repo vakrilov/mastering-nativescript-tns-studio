@@ -1,8 +1,8 @@
 import { View } from 'ui/core/view';
 import { Color } from 'color';
-import { IWaveform, IWaveformModel, WaveformType } from './common';
+import { IWaveform, IWaveformModel, WaveformType, Waveform as WaveformDefinition } from './waveform';
 
-export class Waveform extends View implements IWaveform {
+export class Waveform extends View implements IWaveform, WaveformDefinition {
     private _model: IWaveformModel;
     private _type: WaveformType;
     private _plotColor: string;
