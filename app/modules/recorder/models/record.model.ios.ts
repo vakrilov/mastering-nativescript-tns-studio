@@ -1,9 +1,11 @@
 import { Observable } from 'data/observable';
 import { knownFolders } from 'file-system';
+import { RecordModel as RecordModelDefinition } from ".";
+
 import { IRecordModel, IRecordEvents, RecordState, documentsFilePath } from
     './common';
 
-export class RecordModel extends Observable implements IRecordModel {
+export class RecordModel extends Observable implements IRecordModel, RecordModelDefinition {
     // available events to listen to
     private _events: IRecordEvents;
 

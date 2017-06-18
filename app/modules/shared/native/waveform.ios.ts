@@ -1,14 +1,8 @@
 import { View } from 'ui/core/view';
 import { Color } from 'color';
+import { IWaveform, IWaveformModel, WaveformType } from './common';
 
-// Support live microphone display as well as static audio file renders
-type WaveformType = 'mic' | 'file';
-export interface IWaveformModel {
-    readonly target: any;
-    dispose(): void;
-}
-
-export class Waveform extends View {
+export class Waveform extends View implements IWaveform {
     private _model: IWaveformModel;
     private _type: WaveformType;
     private _plotColor: string;
@@ -22,7 +16,6 @@ export class Waveform extends View {
     public get type() {
         return this._type;
     }
-    
     public set model(value: IWaveformModel) {
         this._model = value;
     }

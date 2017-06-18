@@ -5,11 +5,11 @@
   "repository": "<fill-your-repository-here>",
   "nativescript": {
     "id": "org.nativescript.TNSStudio",
-    "tns-android": {
-      "version": "3.0.0"
-    },
     "tns-ios": {
       "version": "3.0.0"
+    },
+    "tns-android": {
+      "version": "3.0.1"
     }
   },
   "dependencies": {
@@ -22,9 +22,11 @@
     "@angular/platform-browser": "4.0.0",
     "@angular/platform-browser-dynamic": "4.0.0",
     "@angular/router": "4.0.0",
+    "android-waveform-libs": "file:android-waveform-libs",
     "nativescript-angular": "next",
     "nativescript-audio": "^3.4.2",
     "nativescript-audiokit": "file:nativescript-audiokit",
+    "nativescript-permissions": "^1.2.3",
     "nativescript-theme-core": "~1.0.2",
     "reflect-metadata": "~0.1.8",
     "rxjs": "~5.2.0",
